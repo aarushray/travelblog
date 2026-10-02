@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trip · memora</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        <span class="brand-name">memora</span>
+      </a>
+      <nav class="nav-links" aria-label="Main">
+        <a href="index.html#memories" class="active">My memories</a>
+        <a href="index.html#places">Places</a>
+        <a href="index.html#timeline">Timeline</a>
+      </nav>
+      <div class="nav-end">
+        <button id="account-btn" class="text-btn" type="button">Sign in</button>
+        <button id="add-memory-btn" class="pill-btn dark member-only" type="button">+ Add memory</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container trip-page">
+    <a class="back-link" href="index.html">&larr; All travels</a>
+
+    <div id="trip-content" hidden>
+      <!-- Cover photo with the place name over it -->
+      <section class="trip-hero">
+        <img id="trip-cover" alt="">
+        <div class="trip-hero-text">
+          <p id="trip-when" class="trip-hero-when"></p>
+          <h1 id="trip-title" class="trip-hero-title"></h1>
+        </div>
+      </section>
+
+      <div class="stats trip-stats">
+        <div class="stat"><span id="stat-days" class="stat-num"></span><span id="stat-days-label" class="stat-label">Days</span></div>
+        <div class="stat"><span id="stat-memories" class="stat-num"></span><span class="stat-label">Memories</span></div>
+        <div class="stat"><span id="stat-country" class="stat-num"></span><span class="stat-label">Country</span></div>
+      </div>
+
+      <section class="trip-intro">
+        <div class="trip-intro-text">
+          <p id="trip-range" class="eyebrow gold"></p>
+          <h2 class="section-title">The memories</h2>
+          <p id="trip-desc" class="trip-desc"></p>
+          <ul id="trip-tags" class="tags"></ul>
+        </div>
+        <button id="add-memory-here" class="pill-btn dark editor-only" type="button">+ Memory</button>
+      </section>
+
+      <div id="memory-grid" class="memory-grid"></div>
+      <button id="memories-empty" class="empty-box editor-only" type="button" hidden>
+        <span class="add-circle">+</span>
+        <strong>No memories yet</strong>
+        <span>Add the first photo or moment from this trip.</span>
+      </button>
+      <p id="memories-none" class="view-empty visitor-only" hidden>No memories here yet.</p>
+
+      <nav id="trip-pager" class="trip-pager" aria-label="Other trips"></nav>
+
+      <div class="trip-foot editor-only">
+        <button id="edit-trip" class="text-btn" type="button">Edit trip</button>
+        <button id="delete-trip" class="text-btn danger" type="button">Delete trip</button>
+      </div>
+    </div>
+
+    <div id="not-found" class="view-empty" hidden>
+      <p>This trip doesn't exist any more.</p>
+      <a class="pill-btn dark" href="index.html">Back to all travels</a>
+    </div>
+  </main>
+
+  <!-- Full view of one memory -->
+  <dialog id="memory-viewer" class="viewer" aria-labelledby="viewer-title">
+    <div class="viewer-layout">
+      <!-- Whole photo, never cropped -->
+      <div class="viewer-photo">
+        <img id="viewer-img" alt="">
+        <button id="viewer-prev" class="viewer-nav prev" type="button" aria-label="Previous memory">&lsaquo;</button>
+        <button id="viewer-next" class="viewer-nav next" type="button" aria-label="Next memory">&rsaquo;</button>
+      </div>
+
+      <!-- Title and full description -->
+      <div class="viewer-panel">
+        <div class="viewer-top">
+          <span id="viewer-count" class="eyebrow"></span>
+          <button class="viewer-close" type="button" data-close aria-label="Close">&times;</button>
+        </div>
+        <p id="viewer-trip" class="eyebrow gold viewer-trip"></p>
+        <h3 id="viewer-title" class="viewer-title"></h3>
+        <p id="viewer-note" class="viewer-note"></p>
+        <p id="viewer-no-note" class="viewer-note viewer-no-note"></p>
+        <div class="viewer-actions editor-only">
+          <button id="viewer-edit" class="pill-btn light" type="button">Edit memory</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"></script>
+  <script src="config.js"></script>
+  <script src="db.js"></script>
+  <script src="common.js"></script>
+  <script src="trip.js"></script>
+</body>
+</html>
