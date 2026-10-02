@@ -289,7 +289,7 @@ function setSigninMode(create) {
   creatingAccount = create;
   $("signin-title").textContent = create ? "Create an account" : "Sign in";
   $("signin-hint").textContent = create
-    ? "After you confirm your email, the admin approves new accounts before they can add trips."
+    ? "New accounts need the admin's approval before they can add trips."
     : "Sign in to add and edit your trips.";
   $("signup-btn").textContent = create ? "I already have an account" : "Create account instead";
   signinForm.querySelector("[type=submit]").textContent = create ? "Create account" : "Sign in";

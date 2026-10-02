@@ -234,10 +234,18 @@ body.can-edit .visitor-only { display: none !important; }
 }
 .hero-lede {
   margin: 0 0 8px;
-  max-width: 300px;
+  max-width: 320px;
   font-size: 14px;
   line-height: 1.65;
   color: var(--muted);
+}
+.hero-lede p { margin: 0; }
+.hero-signature {
+  margin-top: 14px !important;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--ink);
 }
 
 /* ---------- Stats ---------- */
