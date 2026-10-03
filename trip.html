@@ -81,21 +81,20 @@
 
   <!-- Full view of one memory -->
   <dialog id="memory-viewer" class="viewer" aria-labelledby="viewer-title">
-    <div class="viewer-layout">
+    <div class="viewer-bar">
+      <span id="viewer-count" class="viewer-count"></span>
+      <button class="viewer-close" type="button" data-close aria-label="Close">&times;</button>
+    </div>
+
+    <div id="viewer-stage" class="viewer-stage">
       <!-- Whole photo, never cropped -->
-      <div class="viewer-photo">
+      <figure class="viewer-photo">
         <img id="viewer-img" alt="">
-        <button id="viewer-prev" class="viewer-nav prev" type="button" aria-label="Previous memory">&lsaquo;</button>
-        <button id="viewer-next" class="viewer-nav next" type="button" aria-label="Next memory">&rsaquo;</button>
-      </div>
+      </figure>
 
       <!-- Title and full description -->
       <div class="viewer-panel">
-        <div class="viewer-top">
-          <span id="viewer-count" class="eyebrow"></span>
-          <button class="viewer-close" type="button" data-close aria-label="Close">&times;</button>
-        </div>
-        <p id="viewer-trip" class="eyebrow gold viewer-trip"></p>
+        <p id="viewer-trip" class="viewer-trip"></p>
         <h3 id="viewer-title" class="viewer-title"></h3>
         <p id="viewer-note" class="viewer-note"></p>
         <p id="viewer-no-note" class="viewer-note viewer-no-note"></p>
@@ -103,7 +102,13 @@
           <button id="viewer-edit" class="pill-btn light" type="button">Edit memory</button>
         </div>
       </div>
+
+      <button id="viewer-prev" class="viewer-nav prev" type="button" aria-label="Previous memory">&lsaquo;</button>
+      <button id="viewer-next" class="viewer-nav next" type="button" aria-label="Next memory">&rsaquo;</button>
     </div>
+
+    <!-- Every memory of this trip -->
+    <nav id="viewer-strip" class="viewer-strip" aria-label="Memories of this trip"></nav>
   </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.min.js"></script>
