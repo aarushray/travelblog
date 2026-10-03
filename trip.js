@@ -37,7 +37,7 @@ function render() {
   $("trip-desc").hidden = !trip.description;
   $("trip-tags").replaceChildren(...(trip.tags || []).map((t) => h("li", {}, t)));
 
-  renderMemoryGrid(list);
+  $("memory-grid").replaceChildren(...list.map(memoryCard));
   $("memories-empty").hidden = list.length > 0;
   $("memories-none").hidden = list.length > 0;
 
@@ -45,38 +45,12 @@ function render() {
 }
 onDataChange = render;
 
-// Columns are filled left to right (1st memory in column 1, 2nd in column 2, …)
-// so the trip still reads in order while each photo keeps its own shape.
-// The breakpoints match the .memory-grid rules in styles.css.
-const WIDE = matchMedia("(min-width: 901px)");
-const MEDIUM = matchMedia("(min-width: 641px)");
-
-function renderMemoryGrid(list) {
-  const count = WIDE.matches ? 3 : MEDIUM.matches ? 2 : 1;
-  const columns = Array.from({ length: count }, () => h("div", { class: "memory-col" }));
-  list.forEach((m, i) => columns[i % count].append(memoryCard(m, i)));
-  $("memory-grid").replaceChildren(...(list.length ? columns : []));
-}
-for (const query of [WIDE, MEDIUM]) {
-  query.addEventListener("change", () => trip && renderMemoryGrid(memoriesOf(trip.id)));
-}
-
-function memoryCard(m, i) {
-  const caption = h("span", { class: "memory-caption" },
-    h("span", { class: "memory-num" }, pad2(i + 1)),
-    h("span", { class: "memory-title" }, m.title || "Untitled memory"));
-  const open = () => openViewer(m);
-
-  // No photo: the note itself is the picture.
-  if (!m.photoUrl) {
-    return h("button", { class: "memory-card is-note", type: "button", onclick: open },
-      h("span", { class: "memory-quote" }, m.note || m.title || "Untitled memory"),
-      caption);
-  }
-  return h("button", { class: "memory-card", type: "button", onclick: open },
-    h("span", { class: "memory-frame" },
-      h("img", { class: "memory-media", src: m.photoUrl, alt: m.title, loading: "lazy" })),
-    caption,
+function memoryCard(m) {
+  return h("button", { class: "memory-card", type: "button", onclick: () => openViewer(m) },
+    m.photoUrl
+      ? h("img", { class: "memory-media", src: m.photoUrl, alt: m.title, loading: "lazy" })
+      : h("span", { class: "memory-media" }),
+    h("span", { class: "memory-title" }, m.title || "Untitled memory"),
     m.note && h("span", { class: "memory-note" }, m.note));
 }
 
@@ -107,14 +81,8 @@ function openViewer(m) {
 function showViewerMemory() {
   const m = viewList[viewIndex];
   const img = $("viewer-img");
-  if (m.photoUrl && img.getAttribute("src") !== m.photoUrl) {
-    img.src = m.photoUrl;
-    img.classList.remove("changing");
-    void img.offsetWidth; // restart the fade-in
-    img.classList.add("changing");
-  } else if (!m.photoUrl) {
-    img.removeAttribute("src");
-  }
+  if (m.photoUrl) img.src = m.photoUrl;
+  else img.removeAttribute("src");
   img.alt = m.title;
   viewer.classList.toggle("no-photo", !m.photoUrl);
 
@@ -123,33 +91,14 @@ function showViewerMemory() {
   $("viewer-title").textContent = m.title || "Untitled memory";
   $("viewer-note").textContent = m.note || "";
   $("viewer-note").hidden = !m.note;
-  // Only editors get a hint; visitors just see the photo and title.
-  $("viewer-no-note").textContent = "No description yet. Use “Edit memory” to add one.";
-  $("viewer-no-note").hidden = !!m.note || !canEditTrip(trip);
+  $("viewer-no-note").textContent = canEditTrip(trip)
+    ? "No description yet. Use “Edit memory” to add one."
+    : "No description for this memory.";
+  $("viewer-no-note").hidden = !!m.note;
 
   const several = viewList.length > 1;
   $("viewer-prev").hidden = !several;
   $("viewer-next").hidden = !several;
-  renderStrip(several);
-
-  // Load the neighbours now so stepping to them is instant.
-  for (const d of [-1, 1]) {
-    const near = viewList[(viewIndex + d + viewList.length) % viewList.length];
-    if (near.photoUrl) new Image().src = near.photoUrl;
-  }
-}
-
-function renderStrip(several) {
-  const strip = $("viewer-strip");
-  strip.hidden = !several;
-  if (!several) return;
-  strip.replaceChildren(...viewList.map((m, i) => h("button", {
-    type: "button",
-    "aria-label": m.title || `Memory ${i + 1}`,
-    "aria-current": i === viewIndex ? "true" : null,
-    onclick: () => { viewIndex = i; showViewerMemory(); },
-  }, m.photoUrl ? h("img", { src: m.photoUrl, alt: "" }) : "\u201C")));
-  strip.children[viewIndex].scrollIntoView({ block: "nearest", inline: "center" });
 }
 
 function stepViewer(delta) {
@@ -163,23 +112,6 @@ viewer.addEventListener("keydown", (e) => {
   if (e.target.closest("input, textarea")) return;
   if (e.key === "ArrowLeft") stepViewer(-1);
   if (e.key === "ArrowRight") stepViewer(1);
-});
-
-// Clicking the dark space around the photo closes the viewer.
-$("viewer-stage").addEventListener("click", (e) => {
-  if (e.target.matches(".viewer-stage, .viewer-photo")) viewer.close();
-});
-
-// Swipe left / right on phones.
-let touchX = null;
-$("viewer-stage").addEventListener("touchstart", (e) => {
-  touchX = e.touches.length === 1 ? e.touches[0].clientX : null;
-}, { passive: true });
-$("viewer-stage").addEventListener("touchend", (e) => {
-  if (touchX == null || viewList.length < 2) return;
-  const dx = e.changedTouches[0].clientX - touchX;
-  touchX = null;
-  if (Math.abs(dx) > 50) stepViewer(dx < 0 ? 1 : -1);
 });
 
 $("viewer-edit").addEventListener("click", () => {
